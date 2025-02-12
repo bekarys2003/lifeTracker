@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card p-4">
+          <h2 class="text-center mb-4">Complete Your Registration</h2>
+          <p class="text-center">
+            You are signing up using your Google account. Please choose a username to complete your registration.
+          </p>
+          {% if not form.email.value %}
+            <div class="alert alert-danger">
+              <strong>Error:</strong> The social provider did not provide an email address. Please use a different signup method.
+            </div>
+          {% else %}
+            <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+              {% csrf_token %}
+              {% if form.errors %}
+                <div class="alert alert-danger">
+                  <strong>Error:</strong> Please correct the errors below.
+                  {{ form.errors }}
+                </div>
+              {% endif %}
+              <div class="form-group">
+                <label for="id_email">Email</label>
+                <input type="email" name="email" class="form-control" id="id_email" value="{{ form.email.value }}" readonly>
+              </div>
+              <div class="form-group">
+                <label for="id_username">Username</label>
+                <input type="text" name="username" class="form-control" id="id_username" required>
+                <small class="form-text text-muted">
+                  Required. 150 characters or fewer. Letters, digits, and @/./+/-/_ only.
+                </small>
+              </div>
+              {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+              {% endif %}
+              <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

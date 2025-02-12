@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    "crispy_forms",
+    "crispy_bootstrap5",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -138,7 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
-
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -149,6 +153,24 @@ AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend"
 )
-
-LOGIN_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_REQUIRED = True
+#LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Allow login via username or email
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Disable email verification
+# django-crispy-forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+SESSION_COOKIE_SECURE = True  # Only send cookies over HTTPS
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookies
+SESSION_COOKIE_SAMESITE = 'Lax'  # Protect against CSRF attacks
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Expire session when the browser closes
+
+# settings.py
+ACCOUNT_FORMS = {
+    'social_signup': 'users.forms.CustomSocialSignupForm',
+}
+LOGIN_REDIRECT_URL = '/'
+SOCIALACCOUNT_AUTO_SIGNUP = False
+SOCIALACCOUNT_EMAIL_REQUIRED = True  # Require email for social accounts

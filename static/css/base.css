@@ -1,0 +1,21 @@
+/* ------------main-------------------- */
+
+body {
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text color */
+}
+header {
+    background-color: #1f1f1f; /* Dark header background */
+    padding: 1rem 0;
+}
+nav a {
+    color: #e0e0e0; /* Light link color */
+    margin-right: 1rem;
+    text-decoration: none;
+}
+nav a:hover {
+    color: #ffffff; /* Brighter color on hover */
+}
+main {
+    padding: 2rem 0;
+}
