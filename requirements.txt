@@ -5,3 +5,7 @@ sqlparse==0.5.3
 django-allauth==0.46.0
 crispy-bootstrap5==0.6
 django-crispy-forms==1.14.0
+django-recaptcha==3.0.0
+six==1.16.0
+django-extensions
+python-decouple

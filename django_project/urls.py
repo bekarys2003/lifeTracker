@@ -17,9 +17,14 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-
+from allauth.socialaccount.providers.google.views import oauth2_login, oauth2_callback
+from allauth.socialaccount.views import signup as socialaccount_signup
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/", include("allauth.urls")),
+    path('accounts/google/login/', oauth2_login, name='google_login'),
+    path('accounts/google/login/callback/', oauth2_callback, name='google_callback'),
+
+    # Social account signup URL (required)
+    path('accounts/social/signup/', socialaccount_signup, name='socialaccount_signup'),
     path("", include("users.urls")),
 ]

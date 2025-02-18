@@ -1,6 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetPasswordForm
 from django.contrib.auth import get_user_model
+from captcha.widgets import ReCaptchaV2Checkbox
+from captcha.fields import ReCaptchaField
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -15,8 +17,23 @@ class UserRegistrationForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
-
+            Profile.objects.create(user=user)
         return user
+
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Username or Email'}),
+        label='Username or Email'
+    )
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'form-control', 'placeholder': 'Password'})
+    )
+
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
 from allauth.socialaccount.forms import SignupForm
 from django import forms
@@ -63,3 +80,24 @@ class CustomSocialSignupForm(SignupForm):
         user.username = self.cleaned_data['username']
         user.save()
         return user
+
+
+
+from django import forms
+from .models import Profile
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['bio', 'date_of_birth', 'location']
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class SetPasswordForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['new_password1', 'new_password2']

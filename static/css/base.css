@@ -19,3 +19,28 @@ nav a:hover {
 main {
     padding: 2rem 0;
 }
+
+
+/* Custom styles for reCAPTCHA */
+.g-recaptcha {
+    margin-bottom: 1rem; /* Add spacing below the reCAPTCHA */
+    display: flex;
+    justify-content: center; /* Center the reCAPTCHA widget */
+}
+
+/* Style the reCAPTCHA iframe */
+.g-recaptcha iframe {
+    border-radius: 4px; /* Add rounded corners */
+    border: 1px solid #ddd; /* Add a subtle border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a shadow for depth */
+}
+
+/* Style the reCAPTCHA checkbox and text */
+.g-recaptcha .recaptcha-checkbox {
+    border-radius: 4px; /* Rounded corners for the checkbox */
+}
+
+/* Add hover effect */
+.g-recaptcha iframe:hover {
+    border-color: #007bff; /* Change border color on hover */
+}
