@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, login as auth_login, logout
 from .forms import UserRegistrationForm, UserLoginForm, SetPasswordForm, PasswordResetForm
 from django.contrib.auth.decorators import login_required
@@ -12,11 +12,14 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.db.models.query_utils import Q
+from .forms import ProfileForm
+from django.contrib.auth import login as auth_login
+from django.urls import reverse
+from .models import Profile
+from .forms import ProfileCreateForm
 
 
-
-
-
+# -------Email Activation--------
 def activate(request, uidb64, token):
     User = get_user_model()
     try:
@@ -27,12 +30,13 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-
         messages.success(request, "Email Confirmed. Now you can login")
         return redirect('login')
     else:
         messages.error(request, "Activation link is invalid")
     return redirect('/')
+
+
 
 def activateEmail(request, user, to_email):
     mail_subject = 'activate your user account. '
@@ -50,9 +54,14 @@ def activateEmail(request, user, to_email):
         messages.error(request, f"Problem sending email to {to_email}.")
 
 
+
+# -------Home--------
 def home(request):
     return render(request, 'home.html')
 
+
+
+# -------Registration/Login--------
 @user_not_authenticated
 def register(request):
 
@@ -63,8 +72,6 @@ def register(request):
             user.is_active=False
             user.save()
             activateEmail(request, user, form.cleaned_data.get('email'))
-            # auth_login(request, user, backend='allauth.account.auth_backends.AuthenticationBackend')
-            # messages.success(request, f"New account created {user.username}")
             return redirect('/')
         else:
             for error in list(form.errors.values()):
@@ -88,24 +95,31 @@ def custom_logout(request):
     return redirect("/")
 
 
+
 @user_not_authenticated
 def custom_login(request):
-
     if request.method == 'POST':
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)  # Log the user in
             messages.success(request, f"Welcome back, {user.username}!")
-            next_url = request.GET.get('next', '/')  # Redirect to 'next' or home
-            return redirect(next_url)
+
+            # Check if the user has a profile
+            try:
+                profile = Profile.objects.get(user=user)
+                # Redirect to the user's profile page
+                return redirect(reverse('public_profile', kwargs={'username': user.username}))
+            except Profile.DoesNotExist:
+                # Redirect to the profile update page if no profile exists
+                return redirect('profile_create')
+
         else:
             # Display form errors
             for key, error in list(form.errors.items()):
                 if key == 'captcha' and error[0] == 'This field is required.':
                     messages.error(request, 'You must pass the reCAPTCHA test')
                     continue
-
                 messages.error(request, error)
     else:
         form = UserLoginForm()
@@ -115,43 +129,6 @@ def custom_login(request):
         template_name='users/login.html',
         context={'form': form}
     )
-
-
-
-
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import ProfileForm
-from .models import Profile
-
-@login_required
-def profile_update(request):
-    profile = request.user.profile
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')  # Redirect to the profile page
-    else:
-        form = ProfileForm(instance=profile)
-    return render(request, 'users/profile_update.html', {'form': form})
-
-
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import get_user_model
-from .models import Profile
-
-User = get_user_model()
-
-def public_profile(request, username):
-    # Get the user object or return a 404 error if not found
-    user = get_object_or_404(User, username=username)
-    # Get the profile of the user
-    profile = get_object_or_404(Profile, user=user)
-    # Render the profile template with the profile data
-    return render(request, 'users/profile.html', {'profile': profile})
 
 
 
@@ -169,6 +146,8 @@ def password_change(request):
                 messages.error(request, error)
     form = SetPasswordForm(user)
     return render(request, 'users/password_reset_confirm.html', {'form': form})
+
+
 
 @user_not_authenticated
 def password_reset_request(request):
@@ -207,6 +186,9 @@ def password_reset_request(request):
         context={'form': form}
         )
 
+
+
+
 def passwordResetConfirm(request, uidb64, token):
     User = get_user_model()
     try:
@@ -221,6 +203,7 @@ def passwordResetConfirm(request, uidb64, token):
             if form.is_valid():
                 form.save()
                 messages.success(request, "Your password has been changed successfully")
+                return redirect('/')
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
@@ -231,3 +214,45 @@ def passwordResetConfirm(request, uidb64, token):
         messages.error(request, 'link is expired')
     messages.error(request, 'something went wrong')
     return redirect('/')
+
+
+
+# -------Profile--------
+@login_required
+def profile_update(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'users/profile_update.html', {'form': form})
+
+
+
+User = get_user_model()
+
+def public_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+    return render(request, 'users/profile.html', {'profile': profile})
+
+
+
+def create_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user  # Associate the profile with the logged-in user
+            profile.save()
+            messages.success(request, 'Profile created successfully!')
+            return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
+    else:
+        form = ProfileForm()
+
+    return render(request, 'users/profile_create.html', {'form': form})
+
+

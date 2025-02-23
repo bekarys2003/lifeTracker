@@ -3,6 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, SetP
 from django.contrib.auth import get_user_model
 from captcha.widgets import ReCaptchaV2Checkbox
 from captcha.fields import ReCaptchaField
+from allauth.socialaccount.forms import SignupForm
+from django.core.exceptions import ValidationError
+from .models import Profile
+
 
 
 class UserRegistrationForm(UserCreationForm):
@@ -21,6 +25,7 @@ class UserRegistrationForm(UserCreationForm):
         return user
 
 
+
 class UserLoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super(UserLoginForm, self).__init__(*args, **kwargs)
@@ -35,8 +40,9 @@ class UserLoginForm(AuthenticationForm):
 
     captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
 
-from allauth.socialaccount.forms import SignupForm
+
 from django import forms
+from allauth.socialaccount.forms import SignupForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 
@@ -51,13 +57,12 @@ class CustomSocialSignupForm(SignupForm):
     )
     email = forms.EmailField(
         label="Email",
-        disabled=True,  # Make the email field read-only
-        required=False,  # The email is already provided by the social provider
+        disabled=True,
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Pre-fill the email field with the email from the social provider
         if 'email' in self.sociallogin.account.extra_data:
             self.fields['email'].initial = self.sociallogin.account.extra_data['email']
         else:
@@ -76,15 +81,33 @@ class CustomSocialSignupForm(SignupForm):
         return username
 
     def save(self, request):
+        # Save the user
         user = super().save(request)
         user.username = self.cleaned_data['username']
         user.save()
+
+        # Set a session flag to indicate the user needs to create a profile
+        request.session['redirect_to_create_profile'] = True
+        print(f"Session flag set for user: {user.username}")  # Debug statement
+
         return user
 
 
 
-from django import forms
-from .models import Profile
+class SetPasswordForm(SetPasswordForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['new_password1', 'new_password2']
+
+
+
+class PasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super(PasswordResetForm, self).__init__(*args, **kwargs)
+
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -97,14 +120,19 @@ class ProfileForm(forms.ModelForm):
         }
 
 
-class SetPasswordForm(SetPasswordForm):
+class ProfileCreateForm(forms.ModelForm):
     class Meta:
-        model = get_user_model()
-        fields = ['new_password1', 'new_password2']
+        model = Profile
+        fields = ['bio', 'date_of_birth', 'location']
+        widgets = {
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
-
-class PasswordResetForm(PasswordResetForm):
-    def __init__(self, *args, **kwargs):
-        super(PasswordResetForm, self).__init__(*args, **kwargs)
-
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+    # Add any additional fields or logic for profile creation
+    agree_to_terms = forms.BooleanField(
+        required=True,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        label="I agree to the terms and conditions",
+    )
