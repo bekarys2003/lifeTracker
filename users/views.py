@@ -17,6 +17,10 @@ from django.contrib.auth import login as auth_login
 from django.urls import reverse
 from .models import Profile
 from .forms import ProfileCreateForm
+import google.generativeai as genai
+from decouple import config
+
+
 
 
 # -------Email Activation--------
@@ -249,10 +253,41 @@ def create_profile(request):
             profile.user = request.user  # Associate the profile with the logged-in user
             profile.save()
             messages.success(request, 'Profile created successfully!')
-            return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
+
+            characteristics = analyze_profile_with_ai(profile)
+            request.session['ai_characteristics'] = characteristics  # Store in session
+
+            messages.success(request, 'Profile created successfully!')
+            return redirect('schedule')  # Redirect to the schedule page
     else:
         form = ProfileForm()
 
     return render(request, 'users/profile_create.html', {'form': form})
 
 
+
+def analyze_profile_with_ai(profile):
+    # Configure the Gemini API
+    genai.configure(api_key=config('GEMINI_API_KEY'))
+
+    # Initialize the Gemini model
+    model = genai.GenerativeModel('gemini-pro')
+
+    # Prepare the prompt using profile data
+    prompt = f"""
+    Analyze the following profile and provide a summary of the person's characteristics:
+    - Bio: {profile.bio}
+    - Date of Birth: {profile.date_of_birth}
+    - Location: {profile.location}
+    """
+
+    # Call the Gemini API
+    response = model.generate_content(prompt)
+
+    # Return the generated text
+    return response.text
+
+def schedule(request):
+    # Retrieve AI-generated characteristics from the session
+    characteristics = request.session.get('ai_characteristics', 'No characteristics available.')
+    return render(request, 'users/schedule.html', {'characteristics': characteristics})

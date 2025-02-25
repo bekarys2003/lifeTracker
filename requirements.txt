@@ -9,3 +9,4 @@ django-recaptcha==3.0.0
 six==1.16.0
 django-extensions
 python-decouple
+google-generativeai

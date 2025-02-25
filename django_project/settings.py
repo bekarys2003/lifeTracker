@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"  # or "https" if using SSL
 BASE_URL = "http://127.0.0.1:8000"
