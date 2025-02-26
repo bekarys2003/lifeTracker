@@ -226,14 +226,13 @@ def passwordResetConfirm(request, uidb64, token):
 def profile_update(request):
     profile = request.user.profile
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(request.POST, request.FILES, instance=profile)  # Include request.FILES
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect(reverse('public_profile', kwargs={'username': profile.user.username}))
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'users/profile_update.html', {'form': form})
-
 
 
 User = get_user_model()
@@ -247,21 +246,15 @@ def public_profile(request, username):
 
 def create_profile(request):
     if request.method == 'POST':
-        form = ProfileForm(request.POST)
+        form = ProfileForm(request.POST, request.FILES)  # Include request.FILES
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user  # Associate the profile with the logged-in user
             profile.save()
             messages.success(request, 'Profile created successfully!')
-
-            characteristics = analyze_profile_with_ai(profile)
-            request.session['ai_characteristics'] = characteristics  # Store in session
-
-            messages.success(request, 'Profile created successfully!')
-            return redirect('schedule')  # Redirect to the schedule page
+            return redirect(reverse('public_profile', kwargs={'username': profile.user.username}))
     else:
         form = ProfileForm()
-
     return render(request, 'users/profile_create.html', {'form': form})
 
 
@@ -291,3 +284,5 @@ def schedule(request):
     # Retrieve AI-generated characteristics from the session
     characteristics = request.session.get('ai_characteristics', 'No characteristics available.')
     return render(request, 'users/schedule.html', {'characteristics': characteristics})
+
+

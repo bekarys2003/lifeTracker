@@ -109,26 +109,18 @@ class PasswordResetForm(PasswordResetForm):
 
 
 
+
+
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'date_of_birth', 'location']
-        widgets = {
-            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'location': forms.TextInput(attrs={'class': 'form-control'}),
-        }
-
+        fields = ['gender', 'height', 'weight', 'body_fat', 'date_of_birth', 'location', 'profile_picture']
 
 class ProfileCreateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['bio', 'date_of_birth', 'location']
-        widgets = {
-            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'location': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+        fields = ['gender', 'height', 'weight', 'body_fat', 'date_of_birth', 'location', 'profile_picture']
+
 
     # Add any additional fields or logic for profile creation
     agree_to_terms = forms.BooleanField(
