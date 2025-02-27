@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1>Your Schedule</h1>
+
+    <!-- Add the form for creating a new schedule -->
+    <h2>Add New Schedule Item</h2>
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Render the form fields -->
+        <button type="submit" class="btn btn-primary">Add Schedule</button>
+    </form>
+
+    <!-- Display the list of schedules -->
+    <ul class="list-group">
+        {% for schedule in schedules %}
+            <li class="list-group-item">
+                <strong>{{ schedule.title }}</strong> ({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})
+                <p>{{ schedule.description }}</p>
+                <div>
+                    <a href="{% url 'schedule_update' schedule.pk %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'delete_schedule' schedule.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

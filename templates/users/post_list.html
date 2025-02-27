@@ -2,18 +2,20 @@
 
 {% block content %}
 <div class="container my-5">
-    <!-- Display user profile information -->
-    <h1>{{ profile.user.username }}'s Profile</h1>
-    {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
-    {% endif %}
-    <p>Bio: {{ profile.bio }}</p>
-    <p>Email: {{ profile.user.email }}</p>
+    <h1>Posts</h1>
+
+    <!-- Form to create a new post -->
+    <h2>Create a New Post</h2>
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
 
     <hr>
 
-    <!-- Display the user's posts -->
-    <h2>Posts</h2>
+    <!-- Display all posts -->
+    <h2>All Posts</h2>
     <ul class="list-group">
         {% for post in posts %}
             <li class="list-group-item">
@@ -25,9 +27,10 @@
                     </button>
                 </div>
             </li>
-        {% empty %}
-            <li class="list-group-item">No posts yet.</li>
         {% endfor %}
     </ul>
 </div>
+
+<!-- JavaScript to handle liking/unliking posts -->
+
 {% endblock %}

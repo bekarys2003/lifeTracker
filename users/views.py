@@ -19,8 +19,11 @@ from .models import Profile
 from .forms import ProfileCreateForm
 import google.generativeai as genai
 from decouple import config
-
-
+from .forms import ScheduleForm
+from .models import Schedule
+from .models import Post, Like, Profile, Post
+from .forms import PostForm
+from django.http import JsonResponse
 
 
 # -------Email Activation--------
@@ -237,10 +240,16 @@ def profile_update(request):
 
 User = get_user_model()
 
+
+
 def public_profile(request, username):
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(Profile, user=user)
-    return render(request, 'users/profile.html', {'profile': profile})
+    posts = Post.objects.filter(profile=user).order_by('-created_at')  # Fetch the user's posts
+    return render(request, 'users/profile.html', {
+        'profile': profile,
+        'posts': posts,  # Pass the posts to the template
+    })
 
 
 
@@ -280,9 +289,92 @@ def analyze_profile_with_ai(profile):
     # Return the generated text
     return response.text
 
-def schedule(request):
-    # Retrieve AI-generated characteristics from the session
-    characteristics = request.session.get('ai_characteristics', 'No characteristics available.')
-    return render(request, 'users/schedule.html', {'characteristics': characteristics})
 
 
+# ---------Schedules-------------
+@login_required
+def schedule_create(request):
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            schedule = form.save(commit=False)  # Don't save yet
+            schedule.profile = request.user.profile  # Assign the profile
+            schedule.save()  # Now save
+            return redirect('schedule_list')
+    else:
+        form = ScheduleForm()
+    return render(request, 'users/schedule_form.html', {'form': form})
+
+
+@login_required  # Ensure the user is logged in
+def schedule_list(request):
+    schedules = Schedule.objects.filter(profile=request.user.profile)  # Filter schedules by the current user's profile
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST)
+        if form.is_valid():
+            schedule = form.save(commit=False)  # Don't save the form yet
+            schedule.profile = request.user.profile  # Set the profile to the current user's profile
+            schedule.save()  # Now save the schedule
+            return redirect('schedule_list')  # Redirect to refresh the page
+    else:
+        form = ScheduleForm()
+
+    return render(request, 'users/schedule_list.html', {
+        'schedules': schedules,
+        'form': form,
+    })
+
+
+@login_required
+def schedule_update(request, pk):
+    # Get the schedule item to edit
+    schedule = get_object_or_404(Schedule, pk=pk, profile=request.user.profile)  # Ensure the user owns the schedule item
+    if request.method == 'POST':
+        form = ScheduleForm(request.POST, instance=schedule)  # Bind the form to the existing schedule item
+        if form.is_valid():
+            form.save()  # Save the updated schedule item
+            return redirect('schedule_list')  # Redirect to the schedule list page
+    else:
+        form = ScheduleForm(instance=schedule)  # Pre-fill the form with the existing schedule item
+    return render(request, 'users/schedule_form.html', {'form': form})
+
+
+
+def delete_schedule(request, schedule_id):
+    # Get the schedule object or return a 404 if it doesn't exist
+    schedule = get_object_or_404(Schedule, id=schedule_id)
+
+    # Delete the schedule
+    schedule.delete()
+
+    # Redirect to a different page after deletion (e.g., the schedule list page)
+    return redirect(reverse('schedule_list'))
+
+
+# ---------Posts-------------
+@login_required
+def post_list(request):
+    posts = Post.objects.all().order_by('-created_at')  # Display newest posts first
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.profile = request.user  # Set the post's profile to the current user
+            post.save()
+            return redirect('post_list')
+    else:
+        form = PostForm()
+
+    return render(request, 'users/post_list.html', {
+        'posts': posts,
+        'form': form,
+    })
+
+
+@login_required
+def like_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if not created:
+        like.delete()  # Unlike the post if the like already exists
+    return JsonResponse({'likes_count': post.likes.count()})

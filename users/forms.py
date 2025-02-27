@@ -6,8 +6,8 @@ from captcha.fields import ReCaptchaField
 from allauth.socialaccount.forms import SignupForm
 from django.core.exceptions import ValidationError
 from .models import Profile
-
-
+from .models import Schedule
+from .models import Post
 
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(help_text='A valid email address, please', required=True)
@@ -128,3 +128,26 @@ class ProfileCreateForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         label="I agree to the terms and conditions",
     )
+
+
+
+# Schedules
+
+
+
+
+class ScheduleForm(forms.ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ['title', 'description', 'start_time', 'end_time']
+        widgets = {
+            'start_time': forms.TimeInput(attrs={'type': 'time'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['content']
