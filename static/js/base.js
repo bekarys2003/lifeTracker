@@ -8,7 +8,6 @@ $(document).ready(function() {
             const cookies = document.cookie.split(';');
             for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i].trim();
-                // Check if the cookie name matches
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -32,13 +31,17 @@ $(document).ready(function() {
             type: 'POST',
             url: `/like-post/${postId}/`,
             headers: {
-                'X-CSRFToken': csrfToken  // Include the CSRF token in the headers
+                'X-CSRFToken': csrfToken
             },
             success: function(response) {
+                // Update the like count
                 likeCount.text(response.likes_count);
+
+                // Toggle the liked class
+                likeButton.toggleClass('liked');
             },
             error: function(response) {
-                console.error(response);  // Log the error to the console
+                console.error(response);
                 alert('Error: Could not like post.');
             }
         });

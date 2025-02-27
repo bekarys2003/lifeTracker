@@ -24,7 +24,7 @@ from .models import Schedule
 from .models import Post, Like, Profile, Post
 from .forms import PostForm
 from django.http import JsonResponse
-
+from django.views.decorators.csrf import csrf_exempt
 
 # -------Email Activation--------
 def activate(request, uidb64, token):
@@ -372,9 +372,14 @@ def post_list(request):
 
 
 @login_required
+@csrf_exempt
 def like_post(request, post_id):
-    post = Post.objects.get(id=post_id)
-    like, created = Like.objects.get_or_create(user=request.user, post=post)
-    if not created:
-        like.delete()  # Unlike the post if the like already exists
-    return JsonResponse({'likes_count': post.likes.count()})
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            like.delete()  # Unlike the post if the like already exists
+        return JsonResponse({
+            'likes_count': post.likes.count(),
+        })
+    return JsonResponse({'error': 'Invalid request'}, status=400)

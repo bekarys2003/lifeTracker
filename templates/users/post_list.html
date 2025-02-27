@@ -22,8 +22,8 @@
                 <strong>{{ post.profile.username }}</strong> - {{ post.created_at }}
                 <p>{{ post.content }}</p>
                 <div>
-                    <button class="btn btn-sm btn-outline-primary like-button" data-post-id="{{ post.id }}">
-                        Like (<span class="like-count">{{ post.likes.count }}</span>)
+                    <button class="btn btn-sm like-button {% if request.user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes.count }}</span>
                     </button>
                 </div>
             </li>

@@ -86,3 +86,29 @@ main {
 .list-unstyled li {
     padding: 0.25rem 0;
 }
+
+
+/* ----------like-button------------ */
+.like-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.5em; /* Increase the icon size */
+    color: #ccc; /* Default color for unliked state */
+    padding: 10px; /* Add padding to make the button bigger */
+    display: inline-flex; /* Align icon and text properly */
+    align-items: center; /* Center the icon and text vertically */
+}
+
+.like-button.liked {
+    color: #007bff; /* Blue color for liked state */
+}
+
+.like-button:hover {
+    color: #007bff; /* Change color on hover */
+}
+
+.like-count {
+    margin-left: 8px; /* Add spacing between the icon and the count */
+    font-size: 0.8em; /* Adjust the size of the like count */
+}
