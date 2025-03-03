@@ -150,4 +150,4 @@ class ScheduleForm(forms.ModelForm):
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ['content']
+        fields = ['content', 'image']

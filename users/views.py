@@ -246,6 +246,7 @@ def public_profile(request, username):
     user = get_object_or_404(User, username=username)
     profile = get_object_or_404(Profile, user=user)
     posts = Post.objects.filter(profile=user).order_by('-created_at')  # Fetch the user's posts
+
     return render(request, 'users/profile.html', {
         'profile': profile,
         'posts': posts,  # Pass the posts to the template
@@ -354,20 +355,16 @@ def delete_schedule(request, schedule_id):
 # ---------Posts-------------
 @login_required
 def post_list(request):
-    posts = Post.objects.all().order_by('-created_at')  # Display newest posts first
-    if request.method == 'POST':
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.profile = request.user  # Set the post's profile to the current user
-            post.save()
-            return redirect('post_list')
-    else:
-        form = PostForm()
+    posts = Post.objects.all().order_by('-created_at')
+
+    profile = get_object_or_404(Profile, user=request.user)
+    # Add a flag to each post indicating whether the current user has liked it
+    for post in posts:
+        post.user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
 
     return render(request, 'users/post_list.html', {
         'posts': posts,
-        'form': form,
+        'profile': profile,
     })
 
 
@@ -380,6 +377,6 @@ def like_post(request, post_id):
         if not created:
             like.delete()  # Unlike the post if the like already exists
         return JsonResponse({
-            'likes_count': post.likes.count(),
+            'likes_count': post.post_likes.count(),  # Use post_likes instead of likes
         })
     return JsonResponse({'error': 'Invalid request'}, status=400)

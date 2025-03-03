@@ -1,36 +1,74 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container my-5">
-    <h1>Posts</h1>
+    <h1 style="color: #f5f5f5;">Instagram-like Posts</h1>
 
     <!-- Form to create a new post -->
-    <h2>Create a New Post</h2>
-    <form method="post" class="mb-4">
+    <h2 style="color: #f5f5f5;">Create a New Post</h2>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Post</button>
     </form>
 
-    <hr>
+    <hr style="border-color: #444;">
 
     <!-- Display all posts -->
-    <h2>All Posts</h2>
-    <ul class="list-group">
+    <div class="posts">
         {% for post in posts %}
-            <li class="list-group-item">
-                <strong>{{ post.profile.username }}</strong> - {{ post.created_at }}
-                <p>{{ post.content }}</p>
-                <div>
-                    <button class="btn btn-sm like-button {% if request.user in post.likes.all %}liked{% endif %}" data-post-id="{{ post.id }}">
-                        <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes.count }}</span>
-                    </button>
+            <div class="post-card">
+                <!-- Post Header (Profile Picture and Username) -->
+                <div class="post-header">
+                    <div class="profile-picture-container">
+                        <!-- Debugging: Print the image URL -->
+                        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="profile-picture">
+                    </div>
+                    <span class="username">{{ post.profile.username }}</span>
+
+                    <!-- Three-dot button for post options -->
+                    <div class="post-options">
+                        <button class="btn btn-options" data-post-id="{{ post.id }}">
+                            <i class="fas fa-ellipsis-v"></i> <!-- Three vertical dots icon -->
+                        </button>
+                    </div>
                 </div>
-            </li>
+
+                <!-- Post Image (Only display if image exists) -->
+                {% if post.image %}
+                    <div class="post-image">
+                        <img src="{{ post.image.url }}" alt="Post image" class="img-fluid post-img">
+                    </div>
+                {% endif %}
+
+                <!-- Like Button and Caption -->
+                <div class="post-actions">
+
+                        <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.id }}">
+                            <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
+                        </button>
+
+                </div>
+                <div class="post-caption">
+                    <strong>{{ post.profile.username }}</strong> {{ post.caption }}
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments">
+                    <p>Comments will go here...</p>
+                </div>
+            </div>
+
+            <!-- Modal for post options -->
+            <div id="post-options-modal-{{ post.id }}" class="post-options-modal">
+                <div class="modal-content">
+                    <button class="btn btn-delete" data-post-id="{{ post.id }}">Delete Post</button>
+                </div>
+            </div>
+        {% empty %}
+            <p style="color: #f5f5f5;">No posts yet.</p>
         {% endfor %}
-    </ul>
+    </div>
 </div>
-
-<!-- JavaScript to handle liking/unliking posts -->
-
-{% endblock %}
+{% endblock content %}

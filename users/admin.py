@@ -8,3 +8,7 @@ from .models import Profile
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'gender', 'height', 'weight', 'body_fat', 'date_of_birth', 'location')
     search_fields = ('user__username', 'location')
+
+# @admin.register(Post)
+# class PostAdmin(admin.ModelAdmin):
+#     list_display = ('profile', 'likes')

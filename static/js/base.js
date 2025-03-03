@@ -1,5 +1,3 @@
-// static/js/index.js
-
 $(document).ready(function() {
     // Function to get the CSRF token from the cookie
     function getCookie(name) {
@@ -17,10 +15,28 @@ $(document).ready(function() {
         return cookieValue;
     }
 
+    // Function to update the like button's appearance
+    function updateLikeButton(likeButton, isLiked) {
+        if (isLiked) {
+            likeButton.css('color', '#007bff'); // Blue for liked
+            likeButton.addClass('liked');
+        } else {
+            likeButton.css('color', '#ccc'); // Gray for unliked
+            likeButton.removeClass('liked');
+        }
+    }
+
+    // Set the initial state of all like buttons
+    $('.like-button').each(function() {
+        const likeButton = $(this);
+        const isLiked = likeButton.hasClass('liked');
+        updateLikeButton(likeButton, isLiked);
+    });
+
     // Attach a click event to all like buttons
     $('.like-button').on('click', function() {
-        const postId = $(this).data('post-id');
         const likeButton = $(this);
+        const postId = likeButton.data('post-id');
         const likeCount = likeButton.find('.like-count');
 
         // Get the CSRF token
@@ -37,8 +53,9 @@ $(document).ready(function() {
                 // Update the like count
                 likeCount.text(response.likes_count);
 
-                // Toggle the liked class
-                likeButton.toggleClass('liked');
+                // Update the button's appearance based on the response
+                const isLiked = likeButton.hasClass('liked');
+                updateLikeButton(likeButton, !isLiked); // Toggle the like state
             },
             error: function(response) {
                 console.error(response);
