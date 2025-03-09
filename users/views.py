@@ -25,7 +25,8 @@ from .models import Post, Like, Profile, Post
 from .forms import PostForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 # -------Email Activation--------
 def activate(request, uidb64, token):
     User = get_user_model()
@@ -380,3 +381,21 @@ def like_post(request, post_id):
             'likes_count': post.post_likes.count(),  # Use post_likes instead of likes
         })
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+
+
+@login_required # Temporarily disable CSRF for debugging; re-enable later
+def delete_post(request, post_id):
+    if request.method == 'POST':
+        try:
+            # Ensure the post belongs to the current user
+            post = Post.objects.get(id=post_id, profile=request.user)
+            print(post)
+            post.delete()
+        except Post.DoesNotExist:
+            messages.error(request, 'Error Deleting The Post')
+            return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
+        messages.success(request, 'Post Deleted Successfully!')
+
+    return redirect(reverse('public_profile', kwargs={'username': request.user.username}))

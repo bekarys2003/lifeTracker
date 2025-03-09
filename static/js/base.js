@@ -64,3 +64,23 @@ $(document).ready(function() {
         });
     });
 });
+
+
+
+function toggleOptions(postId) {
+    const modal = document.getElementById(`post-options-modal-${postId}`);
+    if (modal.style.display === "block") {
+        modal.style.display = "none";
+    } else {
+        modal.style.display = "block";
+    }
+}
+
+window.onclick = function(event) {
+    const modals = document.querySelectorAll('.post-options-modal');
+    modals.forEach(modal => {
+        if (event.target === document.getElementById(`post`)) {
+            modal.style.display = "none";
+        }
+    });
+};

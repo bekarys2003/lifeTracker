@@ -16,20 +16,24 @@
     <hr style="border-color: #444;">
 
     <!-- Display all posts -->
-    <div class="posts">
+    <div class="posts" id="post">
         {% for post in posts %}
             <div class="post-card">
                 <!-- Post Header (Profile Picture and Username) -->
                 <div class="post-header">
                     <div class="profile-picture-container">
                         <!-- Debugging: Print the image URL -->
-                        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="profile-picture">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="profile-picture">
+                        {% else %}
+                            <img src="{% static 'path/to/default/image.jpg' %}" alt="Default Profile Picture" class="profile-picture">
+                        {% endif %}
                     </div>
                     <span class="username">{{ post.profile.username }}</span>
 
                     <!-- Three-dot button for post options -->
                     <div class="post-options">
-                        <button class="btn btn-options" data-post-id="{{ post.id }}">
+                        <button class="btn btn-options" data-post-id="{{ post.id }}" onclick="toggleOptions('{{ post.id }}')">
                             <i class="fas fa-ellipsis-v"></i> <!-- Three vertical dots icon -->
                         </button>
                     </div>
@@ -44,11 +48,9 @@
 
                 <!-- Like Button and Caption -->
                 <div class="post-actions">
-
-                        <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.id }}">
-                            <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
-                        </button>
-
+                    <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.id }}">
+                        <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
+                    </button>
                 </div>
                 <div class="post-caption">
                     <strong>{{ post.profile.username }}</strong> {{ post.caption }}
@@ -63,7 +65,11 @@
             <!-- Modal for post options -->
             <div id="post-options-modal-{{ post.id }}" class="post-options-modal">
                 <div class="modal-content">
-                    <button class="btn btn-delete" data-post-id="{{ post.id }}">Delete Post</button>
+                    <form action="{% url 'delete_post' post.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-delete" data-post-id="{{ post.id }}" onclick="deletePost('{{ post.id }}')">Delete Post</button>
+
+                    </form>
                 </div>
             </div>
         {% empty %}
@@ -71,4 +77,36 @@
         {% endfor %}
     </div>
 </div>
+
+
+<!-- CSS for the options modal -->
+<style>
+    /* Style for the options modal */
+    .post-options-modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Style for the delete button */
+    .btn-delete {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-delete:hover {
+        background-color: #ff1a1a;
+    }
+</style>
 {% endblock content %}
