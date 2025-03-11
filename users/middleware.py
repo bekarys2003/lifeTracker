@@ -5,7 +5,6 @@ class ProfileCheckMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("Middleware: Checking session...")  # Debug statement
 
         # Check if the user needs to be redirected to their profile page
         if 'redirect_to' in request.session:

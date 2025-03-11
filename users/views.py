@@ -399,3 +399,16 @@ def delete_post(request, post_id):
         messages.success(request, 'Post Deleted Successfully!')
 
     return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.profile = request.user
+            post.save()
+            return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
+    else:
+        form = PostForm()
+    return render(request, 'users/post_create.html', {'form': form})

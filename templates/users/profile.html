@@ -46,6 +46,7 @@
                 {% endif %}
 
                 <!-- Like Button and Caption -->
+                <h4>{{ post.content }}</h4>
                 <div class="post-actions">
                     <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.id }}">
                         <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
