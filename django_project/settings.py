@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     'captcha',
     'django_extensions',
+    'tracker',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

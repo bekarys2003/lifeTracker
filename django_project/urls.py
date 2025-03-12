@@ -26,10 +26,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('accounts/google/login/', oauth2_login, name='google_login'),
     path('accounts/google/login/callback/', oauth2_callback, name='google_callback'),
-
-    # Social account signup URL (required)
     path('accounts/social/signup/', socialaccount_signup, name='socialaccount_signup'),
     path("", include("users.urls")),
+    path('tracking/', include('tracker.urls')),
 ]
 
 if settings.DEBUG:
