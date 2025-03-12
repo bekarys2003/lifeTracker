@@ -20,8 +20,9 @@ urlpatterns = [
     path('schedule/update/<int:pk>/', schedule_update, name='schedule_update'),
     path('posts/', post_list, name='post_list'),
     path('post-create/', views.create_post, name='post_create'),
-    path('like-post/<int:post_id>/', like_post, name='like_post'),
-    path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('posts/<uuid:post_id>/like/', views.like_post, name='like_post'),
+    path('delete-post/<uuid:post_id>/', views.delete_post, name='delete_post'),
+    path('posts/<uuid:post_id>/', views.post_detail, name='post_detail'),
 
-]
+    ]
 

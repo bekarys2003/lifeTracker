@@ -29,7 +29,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost', cast=Csv(
 
 # Application definition
 
-SITE_ID = 2
+SITE_ID = 3
 
 INSTALLED_APPS = [
     "django.contrib.admin",

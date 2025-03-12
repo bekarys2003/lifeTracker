@@ -2,15 +2,60 @@
 
 {% block content %}
 <div class="container my-5">
-    <!-- Display user profile information -->
-    <h1>{{ profile.user.username }}'s Profile</h1>
-    {% if profile.profile_picture %}
-        <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
-    {% endif %}
-    <p>Bio: {{ profile.bio }}</p>
-    <p>Email: {{ profile.user.email }}</p>
+        <!-- Profile Header -->
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <!-- Profile Picture -->
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}" class="img-fluid rounded-circle" style="width: 150px; height: 150px; border: 3px solid #fff;">
+                {% else %}
+                    <img src="{{ profile.profile_picture.url }}" alt="Default Profile Picture" class="img-fluid rounded-circle" style="width: 150px; height: 150px; border: 3px solid #fff;">
+                {% endif %}
+            </div>
+            <div class="col-md-9">
+                <!-- Username and Buttons -->
+                <h1 style="color: #fff;">{{ profile.user.username }}</h1>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'schedule_list' %}" class="btn btn-primary">Schedule</a>
+                    <a href="{% url 'post_create' %}" class="btn btn-success">Create Post</a>
+                </div>
+                <!-- Profile Stats -->
+                <div class="d-flex gap-4 mt-3">
+                    <div>
+                        <strong>Posts</strong>
+                        <p class="text-center">{{ profile.user.posts.count }}</p>
+                    </div>
+                    <div>
+                        <strong>Followers</strong>
+                        <p class="text-center">0</p> <!-- Replace with actual follower count -->
+                    </div>
+                    <div>
+                        <strong>Following</strong>
+                        <p class="text-center">0</p> <!-- Replace with actual following count -->
+                    </div>
+                </div>
+                <!-- Bio -->
+                <p class="mt-3">{{ profile.bio }}</p>
+            </div>
+        </div>
 
-    <hr>
+        <hr style="border-color: #444;">
+
+        <!-- Profile Details -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3 style="color: #fff;">Details</h3>
+                <ul class="list-unstyled">
+                    <li><strong>Email:</strong> {{ profile.user.email }}</li>
+                    <li><strong>Gender:</strong> {{ profile.gender|default:"Not specified" }}</li>
+                    <li><strong>Height:</strong> {{ profile.height|default:"Not specified" }} meters</li>
+                    <li><strong>Weight:</strong> {{ profile.weight|default:"Not specified" }} kg</li>
+                    <li><strong>Body Fat:</strong> {{ profile.body_fat|default:"Not specified" }}%</li>
+                    <li><strong>Date of Birth:</strong> {{ profile.date_of_birth|default:"Not specified" }}</li>
+                    <li><strong>Location:</strong> {{ profile.location|default:"Not specified" }}</li>
+                </ul>
+            </div>
+        </div>
 
     <!-- Display the user's posts -->
     <h2>Posts</h2>
@@ -48,7 +93,7 @@
                 <!-- Like Button and Caption -->
                 <h4>{{ post.content }}</h4>
                 <div class="post-actions">
-                    <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.id }}">
+                    <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post. }}">
                         <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
                     </button>
                 </div>
@@ -65,9 +110,9 @@
             <!-- Modal for post options -->
             <div id="post-options-modal-{{ post.id }}" class="post-options-modal">
                 <div class="modal-content">
-                    <form action="{% url 'delete_post' post.id %}" method="post">
+                    <form action="{% url 'delete_post' post.uuid %}" method="post">
                         {% csrf_token %}
-                        <button class="btn btn-delete" data-post-id="{{ post.id }}" onclick="deletePost('{{ post.id }}')">Delete Post</button>
+                        <button class="btn btn-delete" data-post-id="{{ post.uuid }}" onclick="deletePost('{{ post.uuid }}')">Delete Post</button>
 
                     </form>
                 </div>
@@ -78,34 +123,5 @@
         </div>
     </ul>
 </div>
-<!-- CSS for the options modal -->
-<style>
-    /* Style for the options modal */
-    .post-options-modal {
-        display: none; /* Hidden by default */
-        position: fixed;
-        z-index: 1000;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
 
-    /* Style for the delete button */
-    .btn-delete {
-        background-color: #ff4d4d;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-delete:hover {
-        background-color: #ff1a1a;
-    }
-</style>
 {% endblock %}

@@ -45,7 +45,7 @@ $(document).ready(function() {
         // Send an AJAX request to the like_post view
         $.ajax({
             type: 'POST',
-            url: `/like-post/${postId}/`,
+            url: `/posts/${postId}/like/`,  // Ensure this matches your Django URL pattern
             headers: {
                 'X-CSRFToken': csrfToken
             },
@@ -64,7 +64,6 @@ $(document).ready(function() {
         });
     });
 });
-
 
 
 function toggleOptions(postId) {

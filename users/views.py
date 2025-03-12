@@ -19,9 +19,9 @@ from .models import Profile
 from .forms import ProfileCreateForm
 import google.generativeai as genai
 from decouple import config
-from .forms import ScheduleForm
+from .forms import ScheduleForm, CommentForm
 from .models import Schedule
-from .models import Post, Like, Profile, Post
+from .models import Post, Like, Profile, Comment
 from .forms import PostForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -354,6 +354,29 @@ def delete_schedule(request, schedule_id):
 
 
 # ---------Posts-------------
+
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, uuid=post_id)
+    comments = post.post_comments.all().order_by('-created_at')  # Get all comments for the post
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user  # Set the comment's user to the logged-in user
+            comment.post = post  # Associate the comment with the post
+            comment.save()
+            return redirect('post_detail', post_id=post_id)  # Redirect to the same post page
+    else:
+        form = CommentForm()
+
+    return render(request, 'users/post_detail.html', {
+        'post': post,
+        'comments': comments,
+        'form': form,
+    })
+
+
 @login_required
 def post_list(request):
     posts = Post.objects.all().order_by('-created_at')
@@ -373,7 +396,7 @@ def post_list(request):
 @csrf_exempt
 def like_post(request, post_id):
     if request.method == 'POST':
-        post = get_object_or_404(Post, id=post_id)
+        post = get_object_or_404(Post, uuid=post_id)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
         if not created:
             like.delete()  # Unlike the post if the like already exists
@@ -390,7 +413,7 @@ def delete_post(request, post_id):
     if request.method == 'POST':
         try:
             # Ensure the post belongs to the current user
-            post = Post.objects.get(id=post_id, profile=request.user)
+            post = Post.objects.get(uuid=post_id, profile=request.user)
             print(post)
             post.delete()
         except Post.DoesNotExist:
@@ -411,4 +434,12 @@ def create_post(request):
             return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
     else:
         form = PostForm()
+    return render(request, 'users/post_create.html', {'form': form})
+
+
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        Comment.objects.get(user=request.user, post=post, content=content)
     return render(request, 'users/post_create.html', {'form': form})
