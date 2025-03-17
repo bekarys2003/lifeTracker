@@ -29,7 +29,7 @@ class Schedule(models.Model):
 
         delay = (start_datetime - now).total_seconds()
 
-        if self.profile.user.phone_number:
+        if self.profile.phone_number:
             send_schedule_notification.apply_async(
                 args=[self.profile.phone_number, f"Your schedule '{self.title}' is starting now!"],
                 countdown=delay
