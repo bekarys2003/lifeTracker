@@ -13,8 +13,17 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 from decouple import config, Csv
 import os
-
+from celery import Celery
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
+# -----Celery-------
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_TIMEZONE = 'UTC'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# /-----Celery-------/
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"  # or "https" if using SSL

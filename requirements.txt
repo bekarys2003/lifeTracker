@@ -11,3 +11,6 @@ django-extensions
 python-decouple
 google-generativeai
 pillow==10.0.0
+twilio
+celery
+redis

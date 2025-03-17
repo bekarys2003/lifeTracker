@@ -9,6 +9,7 @@ User = get_user_model()
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    phone_number = models.CharField(max_length=15, null=True)
     gender = models.TextField(blank=True, null=True)
     height = models.FloatField(blank=True, null=True, help_text="Height in meters")
     weight = models.FloatField(blank=True, null=True, help_text="Weight in kilograms")

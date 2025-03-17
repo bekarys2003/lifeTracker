@@ -20,7 +20,7 @@ def schedule_create(request):
 
 
 
-@login_required  # Ensure the user is logged in
+@login_required
 def schedule_list(request):
     schedules = Schedule.objects.filter(profile=request.user.profile)  # Filter schedules by the current user's profile
     if request.method == 'POST':
@@ -63,3 +63,5 @@ def delete_schedule(request, schedule_id):
 
     # Redirect to a different page after deletion (e.g., the schedule list page)
     return redirect(reverse('schedule_list'))
+
+
