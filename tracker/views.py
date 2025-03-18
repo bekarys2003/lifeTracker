@@ -26,6 +26,17 @@ def schedule_create(request):
 @login_required
 def schedule_list(request):
     schedules = Schedule.objects.filter(profile=request.user.profile)  # Filter schedules by the current user's profile
+    today = timezone.now().date()
+
+    # Count how many schedules have been completed today
+    completed_today_count = Schedule.objects.filter(
+        profile=request.user.profile,  # Filter by the current user's profile
+        completed_at__date=today  # Filter by today's date
+    ).count()
+
+    total_schedules_count = schedules.count()
+
+
     if request.method == 'POST':
         form = ScheduleForm(request.POST)
         if form.is_valid():
@@ -39,6 +50,8 @@ def schedule_list(request):
     return render(request, 'tracker/schedule_list.html', {
         'schedules': schedules,
         'form': form,
+        'completed_today_count': completed_today_count,
+        'total_schedules_count': total_schedules_count,
     })
 
 
@@ -85,9 +98,6 @@ def schedule_detail(request, pk):
 @login_required
 def mark_schedule_completed(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, profile=request.user.profile)
-    print(f"Current Streak: {schedule.streak}")
-    print(f"Last Updated: {schedule.updated_at.date()}")
-    print(f"Today: {timezone.now().date()}")
     # Check if the schedule was last updated yesterday (to maintain the streak)
     if schedule.streak == 0 and schedule.updated_at.date() == timezone.now().date():
         schedule.streak = 1 # Start the streak
@@ -107,5 +117,6 @@ def mark_schedule_completed(request, pk):
                 schedule.streak = 1  # Reset streak if more than one day has passed
 
     schedule.updated_at = timezone.now()  # Update the last updated timestamp
+    schedule.completed_at = timezone.now()
     schedule.save()  # Save the updated streak
     return redirect('schedule_list')

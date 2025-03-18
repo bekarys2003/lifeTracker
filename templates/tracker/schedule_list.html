@@ -14,6 +14,7 @@
 
     <!-- Display the list of schedules -->
     <ul class="list-group">
+        <p>Completed today: {{ completed_today_count }} out of {{ total_schedules_count }}</p>
         {% for schedule in schedules %}
             <a href="{% url 'schedule_detail' schedule.uuid %}">
             <li class="list-group-item">

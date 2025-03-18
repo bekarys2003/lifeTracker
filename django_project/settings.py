@@ -20,7 +20,7 @@ from celery import Celery
 
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = "America/Vancouver"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 # /-----Celery-------/
@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Vancouver"
 
 USE_I18N = True
 

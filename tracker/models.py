@@ -19,6 +19,7 @@ class Schedule(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
+    completed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.title} ({self.start_time} - {self.end_time})'
