@@ -4,7 +4,7 @@ from . import views
 from .views import profile_update, public_profile, post_list, like_post
 
 urlpatterns = [
-    path("", views.home),
+    path("", views.home, name='home'),
     path('register/', views.register, name='register'),
     path('login', views.custom_login, name='login'),
     path('logout', views.custom_logout, name='logout'),

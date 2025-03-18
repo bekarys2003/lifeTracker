@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>{{ schedule.title }}</h1>
+<p>{{ schedule.description }}</p>
+<p>Created at: {{ schedule.created_at }}</p>
+<p>Streak: {{ schedule.streak }}</p>
+{% endblock content %}

@@ -7,11 +7,16 @@ from twilio.rest import Client
 from django.utils import timezone
 from datetime import datetime, timedelta
 from .tasks import send_schedule_notification
+import uuid
+
 
 class Schedule(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='schedules')
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
+    streak = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
 

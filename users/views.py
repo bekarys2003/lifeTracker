@@ -64,6 +64,8 @@ def activateEmail(request, user, to_email):
 
 # -------Home--------
 def home(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
     return render(request, 'home.html')
 
 
@@ -89,7 +91,7 @@ def register(request):
 
     return render(
         request=request,
-        template_name='users/signup.html',
+        template_name='users/auth/signup.html',
         context={'form': form}
     )
 
@@ -133,7 +135,7 @@ def custom_login(request):
 
     return render(
         request=request,
-        template_name='users/login.html',
+        template_name='users/auth/login.html',
         context={'form': form}
     )
 
@@ -152,7 +154,7 @@ def password_change(request):
             for error in list(form.errors.values()):
                 messages.error(request, error)
     form = SetPasswordForm(user)
-    return render(request, 'users/password_reset_confirm.html', {'form': form})
+    return render(request, 'users/auth/password_reset_confirm.html', {'form': form})
 
 
 
@@ -189,7 +191,7 @@ def password_reset_request(request):
     form = PasswordResetForm()
     return render(
         request=request,
-        template_name='users/password_reset.html',
+        template_name='users/auth/password_reset.html',
         context={'form': form}
         )
 
@@ -216,7 +218,7 @@ def passwordResetConfirm(request, uidb64, token):
                     messages.error(request, error)
         form = SetPasswordForm(user)
 
-        return render(request, 'users/password_reset_confirm.html', {'form': form})
+        return render(request, 'users/auth/password_reset_confirm.html', {'form': form})
     else:
         messages.error(request, 'link is expired')
     messages.error(request, 'something went wrong')
@@ -235,7 +237,7 @@ def profile_update(request):
             return redirect(reverse('public_profile', kwargs={'username': profile.user.username}))
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'users/profile_update.html', {'form': form})
+    return render(request, 'users/profile/profile_update.html', {'form': form})
 
 
 User = get_user_model()
@@ -247,7 +249,7 @@ def public_profile(request, username):
     profile = get_object_or_404(Profile, user=user)
     posts = Post.objects.filter(profile=user).order_by('-created_at')  # Fetch the user's posts
 
-    return render(request, 'users/profile.html', {
+    return render(request, 'users/profile/profile.html', {
         'profile': profile,
         'posts': posts,  # Pass the posts to the template
     })
@@ -265,7 +267,7 @@ def create_profile(request):
             return redirect(reverse('public_profile', kwargs={'username': profile.user.username}))
     else:
         form = ProfileForm()
-    return render(request, 'users/profile_create.html', {'form': form})
+    return render(request, 'users/profile/profile_create.html', {'form': form})
 
 
 
@@ -310,7 +312,7 @@ def post_detail(request, post_id):
     else:
         form = CommentForm()
 
-    return render(request, 'users/post_detail.html', {
+    return render(request, 'users/posts/post_detail.html', {
         'post': post,
         'comments': comments,
         'form': form,
@@ -326,7 +328,7 @@ def post_list(request):
     for post in posts:
         post.user_has_liked = Like.objects.filter(user=request.user, post=post).exists()
 
-    return render(request, 'users/post_list.html', {
+    return render(request, 'users/posts/post_list.html', {
         'posts': posts,
         'profile': profile,
     })
@@ -374,7 +376,7 @@ def create_post(request):
             return redirect(reverse('public_profile', kwargs={'username': request.user.username}))
     else:
         form = PostForm()
-    return render(request, 'users/post_create.html', {'form': form})
+    return render(request, 'users/posts/post_create.html', {'form': form})
 
 
 def add_comment(request, post_id):
@@ -382,7 +384,7 @@ def add_comment(request, post_id):
     if request.method == 'POST':
         content = request.POST.get('content')
         Comment.objects.get(user=request.user, post=post, content=content)
-    return render(request, 'users/post_create.html', {'form': form})
+    return render(request, 'users/posts/post_create.html', {'form': form})
 
 
 

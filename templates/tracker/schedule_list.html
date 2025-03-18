@@ -15,12 +15,15 @@
     <!-- Display the list of schedules -->
     <ul class="list-group">
         {% for schedule in schedules %}
+            <a href="{% url 'schedule_detail' schedule.uuid %}">
             <li class="list-group-item">
                 <strong>{{ schedule.title }}</strong> ({{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }})
                 <p>{{ schedule.description }}</p>
+            </a>
                 <div>
-                    <a href="{% url 'schedule_update' schedule.pk %}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="{% url 'delete_schedule' schedule.pk %}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{% url 'schedule_update' schedule.uuid %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'delete_schedule' schedule.uuid %}" class="btn btn-sm btn-danger">Delete</a>
+                    <a href="{% url 'mark_schedule_completed' schedule.uuid %}">Mark as Completed</a>
                 </div>
             </li>
         {% endfor %}
