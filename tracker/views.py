@@ -1,7 +1,7 @@
-from .forms import ScheduleForm
+from .forms import ScheduleForm, DailyProgressForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Schedule
+from .models import Schedule, DailyProgress
 from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
@@ -72,7 +72,7 @@ def schedule_update(request, pk):
 @login_required
 def delete_schedule(request, pk):
     # Get the schedule object or return a 404 if it doesn't exist
-    schedule = get_object_or_404(Schedule, pk=pk)
+    schedule = get_object_or_404(Schedule, pk=pk, profile=request.user.profile)
 
     # Delete the schedule
     schedule.delete()
@@ -81,42 +81,46 @@ def delete_schedule(request, pk):
     return redirect(reverse('schedule_list'))
 
 
-
-@login_required
-def schedule_detail(request, pk):
-    # Fetch the schedule object or return a 404 error if not found
-    schedule = get_object_or_404(Schedule, pk=pk)
-
-
-    # Render the schedule detail template with the schedule, comments, and form
-    return render(request, 'tracker/schedule_detail.html', {
-        'schedule': schedule,
-    })
-
-
-
 @login_required
 def mark_schedule_completed(request, pk):
     schedule = get_object_or_404(Schedule, pk=pk, profile=request.user.profile)
-    # Check if the schedule was last updated yesterday (to maintain the streak)
-    if schedule.streak == 0 and schedule.updated_at.date() == timezone.now().date():
-        schedule.streak = 1 # Start the streak
-        messages.success(request, 'Success')
 
+    # Mark the schedule as completed
+    schedule.completed_at = timezone.now()  # Set the current date and time
+    schedule.save()
+
+    # Redirect back to the schedule detail page
+    return redirect('schedule_detail', pk=schedule.uuid)
+
+
+@login_required
+def schedule_detail(request, pk):
+    schedule = get_object_or_404(Schedule, pk=pk, profile=request.user.profile)
+
+    # Get today's progress entry (if it exists)
+    today = timezone.now().date()
+    daily_progress, created = DailyProgress.objects.get_or_create(
+        schedule=schedule,
+        date=today,
+        defaults={'duration_completed': 0, 'effort_percentage': 0}
+    )
+
+    if request.method == 'POST':
+        form = DailyProgressForm(request.POST, instance=daily_progress)
+        if form.is_valid():
+            form.save()
+            return redirect('schedule_detail', pk=schedule.uuid)
     else:
-        # Check if the schedule was last updated today
-        if schedule.updated_at.date() == timezone.now().date():
-            messages.error(request, 'the streak already completed today')
-        else:
-            # Check if the schedule was last updated yesterday (to maintain the streak)
-            if schedule.updated_at.date() == (timezone.now() - timedelta(days=1)).date():
-                messages.success(request, 'Success')
-                schedule.streak += 1  # Increment streak
-            else:
-                messages.success(request, 'Streak is lost :(')
-                schedule.streak = 1  # Reset streak if more than one day has passed
+        form = DailyProgressForm(instance=daily_progress)
 
-    schedule.updated_at = timezone.now()  # Update the last updated timestamp
-    schedule.completed_at = timezone.now()
-    schedule.save()  # Save the updated streak
-    return redirect('schedule_list')
+    # Get progress data for the last 7 days
+    progress_data = DailyProgress.objects.filter(
+        schedule=schedule,
+        date__gte=today - timezone.timedelta(days=6)  # Last 7 days
+    ).order_by('date')
+
+    return render(request, 'tracker/schedule_detail.html', {
+        'schedule': schedule,
+        'form': form,
+        'progress_data': progress_data,  # Pass progress data to the template
+    })

@@ -401,3 +401,108 @@ main {
 .btn-primary:hover, .btn-success:hover {
     opacity: 0.8;
 }
+
+/* ------------Schedule Detail------------- */
+
+
+.schedule-detail-container {
+    padding: 20px;
+}
+
+.schedule-title {
+    color: #bb86fc; /* Light purple */
+}
+
+.schedule-description {
+    color: #ffffff; /* White text */
+}
+
+.total-duration {
+    color: #ffffff; /* White text */
+}
+
+.completed-at {
+    color: #03dac6; /* Teal */
+}
+
+.not-completed {
+    color: #cf6679; /* Light red */
+}
+
+.form-title {
+    color: #bb86fc; /* Light purple */
+}
+
+.progress-form label {
+    color: #ffffff; /* White text */
+}
+
+.progress-form input,
+.progress-form select,
+.progress-form textarea {
+    background-color: #1f1f1f; /* Dark gray */
+    color: #ffffff; /* White text */
+    border: 1px solid #333; /* Dark gray border */
+    padding: 5px;
+}
+
+.submit-button {
+    background-color: #bb86fc; /* Light purple */
+    color: #121212; /* Dark text */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #9a67ea; /* Darker purple */
+}
+
+.progress-title {
+    color: #bb86fc; /* Light purple */
+}
+
+.progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.progress-table th,
+.progress-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333; /* Dark gray border */
+}
+
+.progress-table th {
+    background-color: #1f1f1f; /* Dark gray header */
+    color: #bb86fc; /* Light purple text */
+}
+
+.progress-table tr:hover {
+    background-color: #1f1f1f; /* Dark gray hover effect */
+}
+
+.no-data {
+    color: #cf6679; /* Light red */
+}
+
+.chart-title {
+    color: #bb86fc; /* Light purple */
+}
+
+.progress-chart {
+    background-color: #1f1f1f; /* Dark gray chart background */
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.back-link {
+    color: #bb86fc; /* Light purple */
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: #9a67ea; /* Darker purple */
+}

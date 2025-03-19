@@ -17,6 +17,7 @@ class Schedule(models.Model):
     description = models.TextField(blank=True, null=True)
     streak = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
+    duration = models.PositiveIntegerField(help_text="Duration in minutes")
     start_time = models.TimeField()
     end_time = models.TimeField()
     completed_at = models.DateTimeField(null=True, blank=True)
@@ -41,3 +42,16 @@ class Schedule(models.Model):
                 countdown=delay
             )
         super().save(*args, **kwargs)
+
+
+class DailyProgress(models.Model):
+    schedule = models.ForeignKey('Schedule', on_delete=models.CASCADE, related_name='daily_progress')
+    date = models.DateField(default=timezone.now)  # Date of the progress entry
+    duration_completed = models.PositiveIntegerField(default=0)  # Completed duration for the day
+    effort_percentage = models.PositiveIntegerField(default=0)  # Effort percentage for the day
+
+    def __str__(self):
+        return f"{self.schedule.title} - {self.date}"
+
+    class Meta:
+        unique_together = ('schedule', 'date')

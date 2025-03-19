@@ -62,7 +62,7 @@
     <ul class="list-group">
         <div class="posts">
             {% for post in posts %}
-            <div class="post-card">
+            <div class="post-card" >
                 <!-- Post Header (Profile Picture and Username) -->
                 <div class="post-header">
                     <div class="profile-picture-container">
@@ -84,16 +84,16 @@
                 </div>
 
                 <!-- Post Image (Only display if image exists) -->
+                <a href="{% url 'post_detail' post.uuid %}">
                 {% if post.image %}
                     <div class="post-image">
                         <img src="{{ post.image.url }}" alt="Post image" class="img-fluid post-img">
                     </div>
                 {% endif %}
-
+                </a>
                 <!-- Like Button and Caption -->
-                <h4>{{ post.content }}</h4>
                 <div class="post-actions">
-                    <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post. }}">
+                    <button class="btn btn-sm like-button {% if post.user_has_liked %}liked{% endif %}" data-post-id="{{ post.uuid }}">
                         <i class="fas fa-thumbs-up"></i> <span class="like-count">{{ post.likes_count }}</span>
                     </button>
                 </div>
@@ -102,21 +102,42 @@
                 </div>
 
                 <!-- Comments Section -->
-                <div class="comments">
-                    <p>Comments will go here...</p>
-                </div>
+            <!-- Comments Section -->
+            <ul class="comment-list">
+                {% if post.post_comments.all %}
+                    <!-- Display only the first comment -->
+                    {% with comment=post.post_comments.first %}
+                        <li class="comment-item">
+                            <div class="comment-header">
+                                <div class="profile-picture-container">
+                                    {% if comment.user.profile.profile_picture %}
+                                        <img src="{{ comment.user.profile.profile_picture.url }}" alt="{{ comment.user.username }}" class="profile-picture">
+                                    {% else %}
+                                        <img src="{{ comment.user.profile.profile_picture.url }}" alt="Default Profile Picture" class="profile-picture">
+                                    {% endif %}
+                                </div>
+                                <strong class="comment-username">
+                                    {{ comment.user.username }}
+                                </strong>
+                                <span class="comment-date">{{ comment.created_at|timesince }} ago</span>
+                            </div>
+                            <p class="comment-content">{{ comment.content }}</p>
+                        </li>
+                    {% endwith %}
+
+                    <!-- Display "View more comments" link if there are more than one comment -->
+                    {% if post.post_comments.count > 1 %}
+                        <li class="view-more-comments">
+                            <a href="{% url 'post_detail' post.uuid %}">View all {{post.post_comments.count}} comments</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="no-comments">No comments yet.</li>
+                {% endif %}
+            </ul>
             </div>
 
-            <!-- Modal for post options -->
-            <div id="post-options-modal-{{ post.id }}" class="post-options-modal">
-                <div class="modal-content">
-                    <form action="{% url 'delete_post' post.uuid %}" method="post">
-                        {% csrf_token %}
-                        <button class="btn btn-delete" data-post-id="{{ post.uuid }}" onclick="deletePost('{{ post.uuid }}')">Delete Post</button>
 
-                    </form>
-                </div>
-            </div>
         {% empty %}
             <p style="color: #f5f5f5;">No posts yet.</p>
         {% endfor %}

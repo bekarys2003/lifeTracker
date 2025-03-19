@@ -2,8 +2,109 @@
 {% load static %}
 
 {% block content %}
-<h1>{{ schedule.title }}</h1>
-<p>{{ schedule.description }}</p>
-<p>Created at: {{ schedule.created_at }}</p>
-<p>Streak: {{ schedule.streak }}</p>
+<div class="schedule-detail-container">
+    <h1 class="schedule-title">{{ schedule.title }}</h1>
+    <p class="schedule-description">{{ schedule.description }}</p>
+    <p class="total-duration">Total Duration: {{ schedule.duration_display }}</p>
+
+    <!-- Display completed_at if it exists -->
+    {% if schedule.completed_at %}
+        <p class="completed-at">Completed at: {{ schedule.completed_at }}</p>
+    {% else %}
+        <p class="not-completed">Not yet completed.</p>
+    {% endif %}
+
+    <!-- Daily Progress Update Form -->
+    <h2 class="form-title">Update Daily Progress</h2>
+    <form method="post" class="progress-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="submit-button">Save</button>
+    </form>
+
+    <!-- Display Progress Data for the Last 7 Days -->
+    <h2 class="progress-title">Progress This Week</h2>
+    <table class="progress-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Duration Completed (minutes)</th>
+                <th>Effort Percentage (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for progress in progress_data %}
+                <tr>
+                    <td>{{ progress.date }}</td>
+                    <td>{{ progress.duration_completed }}</td>
+                    <td>{{ progress.effort_percentage }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="no-data">No progress data available.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Add the Chart.js Chart -->
+    <h2 class="chart-title">Progress Chart</h2>
+    <canvas id="progressChart" class="progress-chart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        const progressChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for progress in progress_data %}"{{ progress.date }}",{% endfor %}],
+                datasets: [{
+                    label: 'Duration Completed (minutes)',
+                    data: [{% for progress in progress_data %}{{ progress.duration_completed }},{% endfor %}],
+                    borderColor: '#bb86fc', /* Light purple */
+                    fill: false,
+                }, {
+                    label: 'Effort Percentage (%)',
+                    data: [{% for progress in progress_data %}{{ progress.effort_percentage }},{% endfor %}],
+                    borderColor: '#03dac6', /* Teal */
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#333', /* Dark gray grid lines */
+                        },
+                        ticks: {
+                            color: '#ffffff', /* White text */
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333', /* Dark gray grid lines */
+                        },
+                        ticks: {
+                            color: '#ffffff', /* White text */
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'easeInOutQuad',
+                }
+            }
+        });
+    </script>
+
+    <!-- Link to go back to the schedule list -->
+    <a href="{% url 'schedule_list' %}" class="back-link">Back to Schedule List</a>
+</div>
 {% endblock content %}
