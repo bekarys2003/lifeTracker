@@ -1,12 +1,12 @@
 from .forms import ScheduleForm, DailyProgressForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Schedule, DailyProgress
+from .models import Schedule, DailyProgress, Shape
 from django.urls import reverse
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
-
+import json
 
 @login_required
 def schedule_create(request):
@@ -36,7 +36,10 @@ def schedule_list(request):
 
     total_schedules_count = schedules.count()
 
+    shapes = [{"type": int(x.type), "color": x.color} for x in Shape.objects.all()]
+    shape_json = json.dumps(shapes)
 
+    context = {'shapes': shape_json}
     if request.method == 'POST':
         form = ScheduleForm(request.POST)
         if form.is_valid():
@@ -52,6 +55,7 @@ def schedule_list(request):
         'form': form,
         'completed_today_count': completed_today_count,
         'total_schedules_count': total_schedules_count,
+        'shapes': shape_json,
     })
 
 
@@ -124,3 +128,5 @@ def schedule_detail(request, pk):
         'form': form,
         'progress_data': progress_data,  # Pass progress data to the template
     })
+
+
