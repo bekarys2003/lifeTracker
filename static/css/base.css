@@ -508,3 +508,6 @@ main {
 }
 
 
+canvas:focus {
+    outline: none !important; /* Remove the focus outline */
+}

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { GLTFLoader } = await import('https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js');
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 1.2;
+    camera.position.z = 2.2;
 
     const scene = new THREE.Scene();
     const loader = new GLTFLoader();
@@ -72,10 +72,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const controls = new OrbitControls(camera, renderer.domElement);
 
+    controls.enableZoom = false;
     const reRender3D = () => {
         requestAnimationFrame(reRender3D);
         renderer.render(scene, camera);
         if (currentModel) currentModel.rotation.y += 0.01;
+        controls.target.set(0, 0, 0);
+
     };
     reRender3D();
 });
