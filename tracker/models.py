@@ -67,15 +67,10 @@ class DailyProgress(models.Model):
 
 
 
-SHAPE_CHOICES = (
-    ("1", "Sphere"),
-    ("2", "Box"),
-    ("3", "Cylinder")
-)
-
-class Shape(models.Model):
-    type = models.CharField(max_length=1, choices=SHAPE_CHOICES)
-    color = models.CharField(max_length=7, help_text='hex')
+class ThreeDModel(models.Model):
+    name = models.CharField(max_length=100)
+    file_path = models.CharField(max_length=255)  # Path to the GLB/GLTF file
+    description = models.TextField(blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return self.name
