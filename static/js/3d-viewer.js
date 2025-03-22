@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { GLTFLoader } = await import('https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js');
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 2.2;
-
     const scene = new THREE.Scene();
     const loader = new GLTFLoader();
     let currentModel = null;
@@ -18,9 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const models = await response.json();
 
-
         // Function to load a model
-        const loadModel = (filePath) => {
+        const loadModel = (filePath, cameraPositionZ) => {
             if (currentModel) {
                 scene.remove(currentModel); // Remove the current model
             }
@@ -30,6 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentModel.position.y = -0.7;
                 currentModel.rotation.y = 1.5;
                 scene.add(currentModel);
+
+                // Set the camera position
+                camera.position.z = cameraPositionZ;
             }, undefined, (error) => {
                 console.error('Error loading model:', error);
             });
@@ -37,21 +37,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Load the first model by default
         if (models.length > 0) {
-            loadModel(models[0].file_path);
+            loadModel(models[0].file_path, models[0].camera_position_z);
         }
 
         // Add a dropdown to switch models
         const modelSelector = document.createElement('select');
         models.forEach((model, index) => {
             const option = document.createElement('option');
-            option.value = model.file_path;
+            option.value = index; // Use index to map to the models array
             option.textContent = model.name;
             modelSelector.appendChild(option);
         });
         document.body.appendChild(modelSelector);
 
         modelSelector.addEventListener('change', (event) => {
-            loadModel(event.target.value); // Load the selected model
+            const selectedModel = models[event.target.value];
+            loadModel(selectedModel.file_path, selectedModel.camera_position_z); // Load the selected model
         });
     } catch (error) {
         console.error('Error fetching models:', error);
@@ -71,14 +72,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     scene.add(directionalLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
-
     controls.enableZoom = false;
+
     const reRender3D = () => {
         requestAnimationFrame(reRender3D);
         renderer.render(scene, camera);
         if (currentModel) currentModel.rotation.y += 0.01;
         controls.target.set(0, 0, 0);
-
     };
     reRender3D();
 });

@@ -68,9 +68,10 @@ class DailyProgress(models.Model):
 
 
 class ThreeDModel(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=100)
     file_path = models.CharField(max_length=255)  # Path to the GLB/GLTF file
     description = models.TextField(blank=True)
-
+    camera_position_z = models.FloatField(default=2.2)
     def __str__(self):
         return self.name

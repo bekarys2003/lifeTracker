@@ -11,4 +11,5 @@ urlpatterns = [
     path('schedule/<uuid:pk>/', views.schedule_detail, name='schedule_detail'),
     path('schedule/<uuid:pk>/complete/', views.mark_schedule_completed, name='mark_schedule_completed'),
     path('api/models/', get_models, name='get_models'),
+    path('choose-model/', views.choose_model, name='choose_model'),
 ]

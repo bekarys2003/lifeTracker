@@ -1,4 +1,4 @@
-from .forms import ScheduleForm, DailyProgressForm
+from .forms import ScheduleForm, DailyProgressForm, ThreeDModelForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Schedule, DailyProgress, ThreeDModel
@@ -131,13 +131,26 @@ def schedule_detail(request, pk):
 
 # ----------Three.js------------
 def get_models(request):
-    models = ThreeDModel.objects.all()
+    models = ThreeDModel.objects.filter(profile=request.user.profile)
     data = [{
         'name': model.name,
         'file_path': model.file_path,
         'description': model.description,
+        'camera_position_z': model.camera_position_z,
     } for model in models]
     return JsonResponse(data, safe=False)
 
 
 
+def choose_model(request):
+    # Fetch all models for the logged-in user
+    models = ThreeDModel.objects.filter(profile=request.user.profile)
+
+    if request.method == 'POST':
+        # Get the selected model ID from the form
+        model_id = request.POST.get('model_id')
+        if model_id:
+            # Redirect to the display page for the selected model
+            return redirect('schedule_list')
+
+    return render(request, 'tracker/choose_model.html', {'models': models})

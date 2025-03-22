@@ -8,6 +8,7 @@
     <div id="scene-box"></div>
 </div>
 <div class="container my-5">
+    <a href="{% url 'choose_model' %}">choose</a>
     <h1>Your Schedule</h1>
 
     <!-- Add the form for creating a new schedule -->
@@ -33,6 +34,13 @@
                     <a href="{% url 'mark_schedule_completed' schedule.uuid %}">Mark as Completed</a>
                 </div>
             </li>
+        {% endfor %}
+        {% for model in models %}
+            <div>
+                <h2>{{ model.name }}</h2>
+                <p>{{ model.description }}</p>
+                <a href="{% url 'edit_model' model.id %}">Edit</a>
+            </div>
         {% endfor %}
     </ul>
 </div>
