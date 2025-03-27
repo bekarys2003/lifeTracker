@@ -130,14 +130,21 @@ def schedule_detail(request, pk):
 
 
 # ----------Three.js------------
+@login_required
 def get_models(request):
-    models = ThreeDModel.objects.all()
+    # Get the active model for the current user's profile
+    try:
+        profile = request.user.profile
+        if profile.active_model:
+            models = [profile.active_model]
+        else:
+            models = []
+    except Profile.DoesNotExist:
+        models = []
+
     data = [{
         'name': model.name,
         'file_path': model.file_path,
         'description': model.description,
     } for model in models]
     return JsonResponse(data, safe=False)
-
-
-

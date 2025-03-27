@@ -10,22 +10,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loader = new GLTFLoader();
     let currentModel = null;
 
-    // Fetch the list of models from the Django backend
     try {
+        // Fetch only the active model for the current user
         const response = await fetch('/tracking/api/models/');
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
         const models = await response.json();
 
-
-        // Function to load a model
-        const loadModel = (filePath) => {
-            if (currentModel) {
-                scene.remove(currentModel); // Remove the current model
-            }
-
-            loader.load(filePath, (gltf) => {
+        // Load the active model if available
+        if (models.length > 0) {
+            loader.load(models[0].file_path, (gltf) => {
                 currentModel = gltf.scene;
                 currentModel.position.y = -0.7;
                 currentModel.rotation.y = 1.5;
@@ -33,38 +27,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }, undefined, (error) => {
                 console.error('Error loading model:', error);
             });
-        };
-
-        // Load the first model by default
-        if (models.length > 0) {
-            loadModel(models[0].file_path);
+        } else {
+            console.log("No active model selected for this profile");
         }
 
-        // Add a dropdown to switch models
-        const modelSelector = document.createElement('select');
-        models.forEach((model, index) => {
-            const option = document.createElement('option');
-            option.value = model.file_path;
-            option.textContent = model.name;
-            modelSelector.appendChild(option);
-        });
-        document.body.appendChild(modelSelector);
-
-        modelSelector.addEventListener('change', (event) => {
-            loadModel(event.target.value); // Load the selected model
-        });
     } catch (error) {
         console.error('Error fetching models:', error);
     }
 
+    // ... rest of your existing scene setup code ...
     const ambientLight = new THREE.AmbientLight('#ffffff', 1.5);
     scene.add(ambientLight);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio || 1);
     renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
-    const sceneBox = document.getElementById('scene-box');
-    sceneBox.appendChild(renderer.domElement);
+    document.getElementById('scene-box').appendChild(renderer.domElement);
 
     const directionalLight = new THREE.DirectionalLight('#ffffff', 1);
     directionalLight.position.set(500, 500, 500);

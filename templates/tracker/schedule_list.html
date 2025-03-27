@@ -6,6 +6,11 @@
 
 <div class="scene-container">
     <div id="scene-box"></div>
+    {% if request.user.profile.active_model %}
+        <p>Currently displaying: {{ request.user.profile.active_model.name }}</p>
+    {% else %}
+        <p>No 3D model selected. <a href="{% url 'profile_settings' %}">Choose one in your profile</a></p>
+    {% endif %}
 </div>
 <div class="container my-5">
     <h1>Your Schedule</h1>
