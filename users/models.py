@@ -16,22 +16,16 @@ class Profile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
-    active_model = models.ForeignKey('tracker.ThreeDModel', on_delete=models.SET_NULL, null=True, blank=True, related_name='active_for_profiles')
+    active_models = models.ManyToManyField('tracker.ThreeDModel', blank=True, related_name='active_in_profiles')
     available_models = models.ManyToManyField('tracker.ThreeDModel', blank=True, related_name='available_in_profiles')
 
-    def add_model(self, model):
-        """Add a 3D model to the user's available models"""
+    def set_active_models(self, model_ids):
+        """Set multiple active models"""
+        self.active_models.set(model_ids)
+
+    def add_available_model(self, model):
+        """Add a model to available models"""
         self.available_models.add(model)
-
-    def set_active_model(self, model):
-        """Set a model as active, ensuring it's in the available models first"""
-        if model in self.available_models.all():
-            self.active_model = model
-            self.save()
-
-    def get_active_model(self):
-        """Get the currently active model"""
-        return self.active_model
 
     def __str__(self):
         return f'{self.user.username}'

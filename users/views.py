@@ -271,6 +271,7 @@ def create_profile(request):
 
 
 
+
 def analyze_profile_with_ai(profile):
     # Configure the Gemini API
     genai.configure(api_key=config('GEMINI_API_KEY'))

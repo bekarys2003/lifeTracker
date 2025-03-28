@@ -130,22 +130,23 @@ def schedule_detail(request, pk):
 
 
 # ----------Three.js------------
-@login_required
-def get_models(request):
-    # Get the active model for the current user's profile
+# views.py
+from django.http import JsonResponse
+
+def get_active_models(request):
     try:
         profile = request.user.profile
-        if profile.active_model:
-            models = [profile.active_model]
-        else:
-            models = []
-    except Profile.DoesNotExist:
-        models = []
+        active_models = profile.active_models.all()
 
-    data = [{
-        'name': model.name,
-        'file_path': model.file_path,
-        'description': model.description,
-        'camera_position_z': model.camera_position_z
-    } for model in models]
-    return JsonResponse(data, safe=False)
+        data = [{
+            'id': model.id,
+            'name': model.name,
+            'file_path': model.file_path,
+            'scale': model.scale,
+            'camera_position_z': model.camera_position_z
+        } for model in active_models]
+
+        return JsonResponse(data, safe=False)
+
+    except Profile.DoesNotExist:
+        return JsonResponse([], safe=False)
