@@ -143,7 +143,9 @@ def get_active_models(request):
             'name': model.name,
             'file_path': model.file_path,
             'scale': model.scale,
-            'camera_position_z': model.camera_position_z
+            'camera_position_z': model.camera_position_z,
+            'camera_position_y': model.camera_position_y,
+            'camera_position_x': model.camera_position_x
         } for model in active_models]
 
         return JsonResponse(data, safe=False)

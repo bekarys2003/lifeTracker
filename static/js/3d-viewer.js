@@ -10,10 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
     document.getElementById('scene-box').appendChild(renderer.domElement);
 
-    // Camera setup
+    // Camera setup - using Z position only for camera
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 3;
-
+    let cameraZPosition = 3; // Default camera distance
     // Lighting
     const ambientLight = new THREE.AmbientLight('#ffffff', 1.5);
     scene.add(ambientLight);
@@ -38,16 +37,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             activeModels.forEach(model => scene.remove(model));
             activeModels = [];
 
-            // Load new models with positions
-            modelsData.forEach((modelData, index) => {
+            // Set camera Z position from first model (if available)
+            if (modelsData.length > 0 && modelsData[0].camera_position_z) {
+                cameraZPosition = modelsData[0].camera_position_z;
+            }
+            camera.position.z = 17;
+
+            // Load new models with positions from model data
+            modelsData.forEach((modelData) => {
                 loader.load(modelData.file_path, (gltf) => {
                     const model = gltf.scene;
 
                     // Apply model-specific settings
                     model.scale.set(modelData.scale, modelData.scale, modelData.scale);
-                    model.position.x = index * 2 - (modelsData.length - 1); // Spread models horizontally
-                    model.position.y = -0.7;
-                    model.rotation.y = 1.5;
+
+                    // Use model's X and Y positions from Django
+                    model.position.x = modelData.camera_position_x || 0;
+                    model.position.y = modelData.camera_position_y || -0.7; // Default Y position
+                    model.position.z = modelData.camera_position_z || 0.7;; // Models are at Z=0 plane
+
+
 
                     scene.add(model);
                     activeModels.push(model);
@@ -68,13 +77,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Error loading active models:', error);
         }
     }
-    const initialRotationZ = camera.rotation.z;
+
     // Animation loop
     function animate() {
         requestAnimationFrame(animate);
         if (controls) controls.update();
 
-        camera.rotation.z += 0.02;  // Roll
+        // Apply camera Z position
+        camera.position.y = cameraZPosition;
+
+        // Rotate all models
+        camera.rotation.y += 0.05;  // Roll
         if (controls) {
             controls.autoRotate = true;  // Orbit around model
             controls.autoRotateSpeed = 0.5;
