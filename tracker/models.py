@@ -71,6 +71,6 @@ class ThreeDModel(models.Model):
     name = models.CharField(max_length=100)
     file_path = models.CharField(max_length=255)  # Path to the GLB/GLTF file
     description = models.TextField(blank=True)
-
+    camera_position_z = models.FloatField(default=1.2)
     def __str__(self):
         return self.name

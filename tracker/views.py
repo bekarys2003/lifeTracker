@@ -146,5 +146,6 @@ def get_models(request):
         'name': model.name,
         'file_path': model.file_path,
         'description': model.description,
+        'camera_position_z': model.camera_position_z
     } for model in models]
     return JsonResponse(data, safe=False)
