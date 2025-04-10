@@ -1,7 +1,64 @@
+/* Set the header background to a dark shade */
+.main-header {
+    background-color: #0b0b0a; /* Dark background */
+    padding: 0px 0; /* Add padding for spacing */
+}
+
+/* Navigation styling */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand .logo-img {
+    max-width: 60px; /* Set max width for logo */
+    height: auto;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px; /* Space between links */
+}
+
+.nav-link,
+.nav-link-signup {
+    text-decoration: none;
+    font-size: 19px; /* Set a readable font size */
+    padding: 5px 10px; /* Add padding around links */
+    border-radius: 18px; /* Rounded corners for links */
+    transition: background-image 0.7s ease;
+}
+
+.nav-link:hover{
+    color: white;
+}
+.nav-link-signup:hover{
+    color: black;
+    background: linear-gradient(to bottom, #e9e9e7, #a0a0a0);
+
+}
+
+.nav-link-signup {
+    background: linear-gradient(to bottom, #f4f4f4, #bbbbbb);
+     /* Mid green background for sign-up button */
+    color: rgb(13, 13, 13);
+}
+
+
+/* For small screens (mobile) */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
 /* ------------main-------------------- */
 
 body {
-    background-color: #121212; /* Dark background */
+    /* background-color: #121212;  */
+    background-color: #040404;
     color: #e0e0e0; /* Light text color */
 }
 
@@ -507,4 +564,293 @@ main {
     color: #9a67ea; /* Darker purple */
 }
 
+/* -----------------homepage */
 
+.home-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 22px;
+    margin-top: -25px;
+}
+
+.text-content {
+    margin-left: 40px;
+    max-width: 100%; /* Limit the width of the text block */
+}
+
+
+.container-text {
+    display: inline-flex;
+    align-items: center; /* Center content vertically */
+    width: auto;
+}
+
+.home-h1 {
+    background: linear-gradient(to bottom, #b6b6b6, #ffffff);
+    -webkit-background-clip: text;  /* Apply gradient to text */
+    color: transparent;  /* Make text transparent so the gradient is visible */
+    font-family: 'Playfair Display SC', serif;
+    font-size: 3.8rem;
+    margin-bottom: 15px;
+    display: inline-block; /* Ensure text is inline and wraps correctly */
+    position: relative;
+}
+
+.inline-text, .gradient-word {
+    display: inline; /* Ensure both words are treated as inline elements */
+    background: linear-gradient(to bottom, #b6b6b6, #ffffff); /* Gradient for each word */
+    -webkit-background-clip: text;  /* Ensure gradient is applied to text */
+    color: transparent; /* Make text transparent so gradient is visible */
+}
+
+.gradient-word {
+    margin-left: 45px;
+}
+
+
+#typewriter-text span {
+    white-space: pre;
+    opacity: 0;
+    display: inline-block;
+    transition: opacity 0.2s ease-in;
+}
+
+#typewriter-text {
+    white-space: pre;
+
+}
+
+#h6-home {
+    /* Initially hidden */
+    transition: opacity 0.5s ease, visibility 0.5s ease; /* Smooth transition */
+}
+
+.home-h6 {
+
+    max-width: 100%;
+    font-size: 1.2rem;
+    color: #5f5f5f; /* Muted green for description text */
+    font-weight: 200;
+    margin-left: -17px;
+    white-space: nowrap;
+
+}
+
+.image-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-img {
+    max-width: 550px; /* Limit logo size */
+    height: auto;
+}
+
+.home-button {
+    background-color: #323e26; /* Green background to match design */
+    color: #b8b6b6; /* White text color */
+    font-family: 'Playfair Display SC', serif; /* Same font as header */
+    font-size: 1.2rem;
+    padding: 12px 30px; /* Add padding for a larger clickable area */
+    border: none;
+    border-radius: 25px; /* Rounded corners */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition on hover */
+    margin-top: 20px; /* Add spacing above the button */
+}
+
+.home-button:hover {
+    background-color: #8caf6a; /* Slightly darker green on hover */
+    transform: translateY(-3px); /* Slightly raise the button */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .home-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .text-content {
+        max-width: 100%;
+    }
+
+    .logo-img {
+        max-width: 200px;
+    }
+}
+
+
+
+/* -------------bottom homeopage */
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 0; /* Align to the left */
+    right: 0; /* Extend to the right */
+    margin: 0 auto; /* Center horizontally */
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    opacity: 0.7;
+    animation: bounce 1.5s infinite;
+    display: flex; /* Using flexbox */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Horizontally center */
+    justify-content: center; /* Vertically center */
+}
+
+.scroll-indicator p {
+    margin: 0px; /* Remove margin */
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.scroll-indicator .arrow {
+    width: 25px;
+    height: 25px;
+    border-left: 3px solid #333;
+    border-bottom: 3px solid #333;
+    transform: rotate(45deg); /* Points the arrow downward */
+    margin-top: 10px;
+    animation: arrow-bounce 1.5s infinite;
+}
+
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+}
+
+@keyframes arrow-bounce {
+    0%, 100% {
+        transform: rotate(-45deg) translateY(0);
+    }
+    50% {
+        transform: rotate(-45deg) translateY(0);
+    }
+}
+
+/* Footer styling */
+.footer {
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer .social-media a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 1rem;
+}
+
+.footer .social-media a:hover {
+    text-decoration: underline;
+}
+
+.footer {
+    bottom: 0;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer .social-media a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 1rem;
+}
+
+.footer .social-media a:hover {
+    text-decoration: underline;
+}
+
+
+
+/* ---------why Us page */
+
+.benefits {
+    background-color: #000; /* Black background for the section */
+    color: white; /* White text */
+    padding: 50px 0;
+    text-align: center;
+}
+
+.benefits h2 {
+    font-family: 'Playfair Display SC', serif;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: white;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    justify-items: center;
+}
+
+.benefit-item {
+    background-color: #111; /* Dark background for the benefit items */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.benefit-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.benefit-item p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    color: #ccc; /* Light gray text for the descriptions */
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .benefits-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .benefits-grid {
+        grid-template-columns: 1fr; /* One column on very small screens */
+    }
+}

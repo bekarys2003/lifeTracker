@@ -15,19 +15,27 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/base.js' %}"></script>
     <meta name="csrf-token" content="{{ csrf_token }}">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Anton&display=swap" as="style" type="text/css" crossorigin="anonymous">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC&display=swap" as="style" type="text/css" crossorigin="anonymous">
 </head>
 <body>
-    <header>
-        <nav class="container">
-            <a href="{% url 'home' %}">Home</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'register' %}">Sign Up</a>
-            {% endif %}
+    <header class="main-header">
+        <nav class="navbar navbar-expand-lg container">
+            <a href="{% url 'home' %}" class="navbar-brand">
+                <img src="{% static 'images/logo4.png' %}" alt="Your Logo" class="logo-img">
+            </a>
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    <a href="{% url 'register' %}" class="nav-link-signup">Sign Up</a>
+                {% endif %}
+            </div>
         </nav>
     </header>
+
+
     <main class="container">
         {% include 'includes/messaging.html' %}
         {% block content %}{% endblock %}

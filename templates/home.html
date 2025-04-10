@@ -1,10 +1,266 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
-    {% load socialaccount %}
-    <h2>Google login</h2>
-    <a href="{% provider_login_url 'google' %}?next=/">Login With Google</a>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display+SC:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barriecito&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Delius&display=swap" rel="stylesheet">
 
-    {% if user.is_authenticated %}
-        <p>you are signed in as {{user.username}}</p>
-    {% endif %}
+
+<section class="home-content">
+    <div class="text-content">
+        <div class="container-text">
+        <h1 class="home-h1">
+            <div class="gradient-word">track</div>
+            <span id="dynamic-text" class="inline-text">habits</span>
+            <div><span id="typewriter-text"></span></div>
+        </h1>
+        </div>
+        <h6 class="home-h6" id="h6-home" style="opacity: 0; visibility: hidden;">Elevate your life by tracking your health, career, hobbies all in one place.</h6>
+        <button class="home-button" id="button-home" style="opacity: 0; visibility: hidden;">Try Now</button>
+    </div>
+    <div class="image-content">
+        <img src="{% static 'images/header3.png' %}" alt="Your Logo" class="logo-img">
+    </div>
+
+</section>
+<div class="scroll-indicator" id="scroll-indicator" style="opacity: 0; visibility: hidden;">
+    <p>Scroll Down</p>
+    <div class="arrow"></div>
+</div>
+
+<!-- New Sections Below -->
+<!-- Benefits Section -->
+<section class="benefits" id="benefits">
+    <div class="container">
+        <h2>why choose us?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-item">
+                <img src="{% static 'images/logo4.png' %}" alt="Benefit 1">
+                <p>Track multiple aspects of your life: health, work, and personal growth.</p>
+            </div>
+            <div class="benefit-item">
+                <img src="{% static 'images/logo4.png' %}" alt="Benefit 2">
+                <p>Easy-to-use interface for tracking and analyzing your habits.</p>
+            </div>
+            <div class="benefit-item">
+                <img src="{% static 'images/logo4.png' %}" alt="Benefit 3">
+                <p>Detailed reports to monitor your progress over time.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about" id="about">
+    <div class="container">
+        <h2>About Us</h2>
+        <p>Our app is designed to help you track your habits, achieve your personal goals, and stay motivated every day. Whether you're focusing on health, career, or hobbies, this tool makes it easy to track your progress and stay on track.</p>
+    </div>
+</section>
+
+
+
+<!-- How It Works Section -->
+<section class="how-it-works" id="how-it-works">
+    <div class="container">
+        <h2>How It Works</h2>
+        <p>It's simple! Here’s how you can start:</p>
+        <ol>
+            <li>Sign up and create a profile.</li>
+            <li>Set your goals and habits you'd like to track.</li>
+            <li>Start logging your progress daily!</li>
+            <li>Analyze your progress and adjust to optimize your performance.</li>
+        </ol>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact" id="contact">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form action="/submit-form" method="POST">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="message">Your Message:</label>
+            <textarea id="message" name="message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</section>
+<!-- <section class="footer">
+    <div class="footer-content">
+        <p>&copy; 2025 Your Company. All rights reserved.</p>
+        <div class="social-media">
+            <a href="https://facebook.com" target="_blank">Facebook</a>
+            <a href="https://twitter.com" target="_blank">Twitter</a>
+            <a href="https://instagram.com" target="_blank">Instagram</a>
+        </div>
+    </div>
+</section>
+ -->
+
+<script>
+let loadTime = Date.now();
+    //scroll style
+    document.getElementById('scroll-indicator').addEventListener('click', function() {
+        // Scroll smoothly to the next section (target-section)
+        document.getElementById('benefits').scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+    const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        const scrollIndicator = document.getElementById('scroll-indicator');
+
+        // If the "About" section is in view, hide the scroll indicator
+        if (!entry.isIntersecting && (Date.now() - loadTime) > 2000) {
+            // If the conditions are met, show the scroll indicator
+            scrollIndicator.style.opacity = 1;
+            scrollIndicator.style.visibility = 'visible';
+        } else if (entry.isIntersecting) {
+            // If the "Benefits" section is in view, hide the scroll indicator
+            scrollIndicator.style.opacity = 0;
+            scrollIndicator.style.visibility = 'hidden';
+        }
+    });
+}, { threshold: 0.1 }); // Trigger when 10% of the "About" section is in view
+
+// Start observing the "About" section
+observer.observe(document.getElementById('benefits'));
+    // homestyle
+    document.addEventListener('DOMContentLoaded', function() {
+        const textArray = [
+            "fitness",
+            "School",
+            "work",
+            "Hobbies",
+            "Skin Care",
+            "Studying",
+            "Journaling",
+            "Meditation",
+            "Sleep",
+            "Steps",
+            "habits"
+        ];
+
+        let currentIndex = 0;
+        const h1Element = document.getElementById("dynamic-text");
+
+        function changeText() {
+            h1Element.textContent = textArray[currentIndex];
+            switch (currentIndex) {
+            case 0: // "Gym"
+                h1Element.style.color = "red";  // Green
+                h1Element.style.fontWeight = "bold";
+                h1Element.style.fontFamily = "'Boldonje', sans-serif";
+                break;
+            case 1: // "School"
+                h1Element.style.color = "#4A90E2";  // Blue
+                h1Element.style.fontWeight = "normal";
+                h1Element.style.fontFamily = "'Bangers', sans-serif";
+                break;
+            case 2: // "Work"
+                // h1Element.style.fontFamily = "'Anton', sans-serif";
+                h1Element.style.fontWeight = "bold";
+                h1Element.style.color = "orange";  // Orange
+                h1Element.style.fontFamily = "'Barriecito', cursive";
+                break;
+            case 3: // "Hobbies"
+                h1Element.style.color = "green";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Delius', cursive";
+                break;
+            case 4: // "Hobbies"
+                h1Element.style.color = "purple";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Boldonje', sans-serif";
+                break;
+            case 5: // "Hobbies"
+                h1Element.style.color = "yellow";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Barriecito', cursive";
+                break;
+            case 6: // "Hobbies"
+                h1Element.style.color = "#40EFC0";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Boldonje', sans-serif";
+                break;
+            case 7: // "Hobbies"
+                h1Element.style.color = "#FFD855";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Bangers', sans-serif";
+                break;
+            case 8: // "Hobbies"
+                h1Element.style.color = "#EB6ED2";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Delius', cursive";
+                break;
+            case 9: // "Hobbies"
+                h1Element.style.color = "#3F50E8";  // Gray
+                h1Element.style.fontWeight = "lighter";
+                h1Element.style.fontFamily = "'Barriecito', cursive";
+                break;
+            case 10: // "Hobbies"
+                h1Element.style.backgroundImage = 'linear-gradient(to top, #ffffff, #ffffff)';
+                h1Element.style.webkitBackgroundClip = 'text';  // Using -webkit-background-clip for better browser compatibility
+                h1Element.style.backgroundClip = 'text';  // Standard for modern browsers
+                h1Element.style.color = 'white';
+                h1Element.style.fontFamily = "'Playfair Display SC', serif";
+                h1Element.style.fontSize = '3.8rem';
+                h1Element.style.marginBottom = '15px';
+                break;
+            default:
+                h1Element.style.color = "#A7D129";  // Default green
+                h1Element.style.fontWeight = "normal";
+        }
+            currentIndex = (currentIndex + 1) % textArray.length;
+            if (currentIndex === 0) {
+                clearInterval(intervalID); // Stop the interval when the cycle completes
+        }
+        }
+
+        // Change the text every 5 seconds
+        const intervalID = setInterval(changeText, 150);
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const text = "create progress";  // Your text
+            const H6Element = document.getElementById("h6-home");
+            const typewriterTextElement = document.getElementById("typewriter-text");
+
+            // Split the text into individual letters and spaces
+            text.split('').forEach((letter, index) => {
+                // Create a span for each letter
+                const span = document.createElement('span');
+                span.textContent = letter;
+                typewriterTextElement.appendChild(span);
+                span.style.display = 'inline-block'; // To ensure letters are inline
+
+                // Animate each letter with a delay
+                setTimeout(() => {
+                    span.style.transition = 'opacity 0.2s';
+                    span.style.opacity = 1; // Make the letter visible
+                }, index * 50);
+
+            });
+        }, 2100);
+        setTimeout(function() {
+            const elementsToShow = [
+                document.getElementById("h6-home"),
+                document.getElementById("button-home"),
+                document.getElementById("scroll-indicator")
+            ];
+
+            // Set opacity and visibility to make the elements visible
+            elementsToShow.forEach(element => {
+                element.style.opacity = 1;
+                element.style.visibility = 'visible';
+            });
+        }, 2500)
+
+});
+</script>
 {% endblock %}
