@@ -796,7 +796,7 @@ main {
 /* ---------why Us page */
 
 .benefits {
-    background-color: #000; /* Black background for the section */
+
     color: white; /* White text */
     padding: 50px 0;
     text-align: center;
@@ -809,48 +809,140 @@ main {
     color: white;
 }
 
-.benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    justify-items: center;
+
+.settings-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    gap: 10px;
 }
 
-.benefit-item {
-    background-color: #111; /* Dark background for the benefit items */
-    padding: 20px;
+.websites-container {
+    background-color: #030303;
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
+    padding: 8px;
+    width: 48%;
+    margin: 0 auto; /* Centers the block on the screen */
+    position: relative;
 }
 
-.benefit-item:hover {
-    transform: scale(1.05); /* Slight zoom effect on hover */
+.blocklist-container {
+    width: 60%; /* Set the container to 60% of the screen width */
+    background-color: #030303; /* Dark background for the container */
+    padding: 8px;
+    border-radius: 10px;
+    margin: 0 auto; /* Centers the block on the screen */
+    position: relative; /* Ensure positioning of text is relative to the container */
 }
 
-.benefit-item img {
+
+/* added */
+
+.toggle-container {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
+    position: relative;
+    height: 380px;
+    overflow: hidden;
 }
 
-.benefit-item p {
-    font-family: 'Arial', sans-serif;
+.image-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 15px;
+}
+
+.image-container::before {
+    content: ''; /* Create the pseudo-element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, black 20%, transparent 80%); /* Gradient overlay */
+    z-index: 1; /* Ensure it overlays above the image */
+}
+
+
+.text-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    z-index: 2; /* Ensure the text stays on top of the image */
+    color: white; /* Set the text color to white or any color that suits the background */
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: Add a semi-transparent background for better contrast */
+    border-radius: 0 0 15px 15px; /* Optional: Rounded corners at the bottom */
+}
+
+.main-idea {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.description {
+    font-size: 1rem;
+}
+
+/* added */
+
+
+
+.toggle-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1; /* Ensure the content is above the background image */
+}
+
+.toggle-item input {
+    margin-right: 10px;
+}
+
+.toggle-item label {
     font-size: 1rem;
     color: #ccc; /* Light gray text for the descriptions */
-    margin-top: 15px;
-    text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .benefits-grid {
-        grid-template-columns: 1fr 1fr; /* Two columns on smaller screens */
-    }
+
+.websites-list {
+    margin-top: 20px;
 }
 
-@media (max-width: 480px) {
-    .benefits-grid {
-        grid-template-columns: 1fr; /* One column on very small screens */
-    }
+.website-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.website-item .website-name {
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+.website-item .action-btn {
+    background-color: #3B3B3B;
+    border: none;
+    color: #4CAF50;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.website-item .action-btn:hover {
+    background-color: #2F8B2F;
 }
